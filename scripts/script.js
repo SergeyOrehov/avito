@@ -7,34 +7,39 @@ const modalAdd = document.querySelector(".modal__add"),
   catalog = document.querySelector(".catalog"),
   modalItem = document.querySelector(".modal__item");
 
-addAd.addEventListener("click", () => {
-  modalAdd.classList.remove("hide");
-  modalBtnSubmit.disabled = true;
-});
+const elementsModalSubmit = [...modalSubmit.elements].filter(
+  (elem) => elem.tagName !== "BUTTON"
+);
 
-modalAdd.addEventListener("click", (event) => {
-  const target = event.target;
-  if (target.classList.contains("modal__close") || target === modalAdd) {
-    modalAdd.classList.add("hide");
-    modalSubmit.reset();
-  }
-});
-
-catalog.addEventListener("click", () => {
-  modalItem.classList.remove("hide");
-});
-
-modalItem.addEventListener("click", (event) => {
-  const target = event.target;
-  if (target.classList.contains("modal__close") || target === modalItem) {
-    modalItem.classList.add("hide");
-  }
-});
-
-document.addEventListener("keydown", function (event) {
+const closeModalEsc = (event) => {
   if (event.key === "Escape") {
     modalAdd.classList.add("hide");
     modalItem.classList.add("hide");
     modalSubmit.reset();
+    document.removeEventListener("keydown", closeModalEsc);
   }
+};
+
+const closeModal = function (event) {
+  const target = event.target;
+
+  if (target.closest(".modal__close") || target === this) {
+    this.classList.add("hide");
+    modalSubmit.reset();
+  }
+};
+
+addAd.addEventListener("click", () => {
+  modalAdd.classList.remove("hide");
+  modalBtnSubmit.disabled = true;
+  document.addEventListener("keydown", closeModalEsc);
 });
+
+catalog.addEventListener("click", (event) => {
+  const target = event.target;
+  if (target.closest(".card")) modalItem.classList.remove("hide");
+  document.addEventListener("keydown", closeModalEsc);
+});
+
+modalAdd.addEventListener("click", closeModal);
+modalItem.addEventListener("click", closeModal);
