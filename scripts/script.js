@@ -1,7 +1,6 @@
 "use strict";
 
 const dataBase = JSON.parse(localStorage.getItem("awito")) || [];
-console.log(dataBase);
 
 const modalAdd = document.querySelector(".modal__add"),
   addAd = document.querySelector(".add__ad"),
@@ -13,6 +12,9 @@ const modalAdd = document.querySelector(".modal__add"),
   modalFileInput = document.querySelector(".modal__file-input"),
   modalFileBtn = document.querySelector(".modal__file-btn"),
   modalImageAdd = document.querySelector(".modal__image-add");
+
+const textFileBtn = modalFileBtn.textContent;
+const srcModalImage = modalImageAdd.src;
 
 const elementsModalSubmit = [...modalSubmit.elements].filter(
   (elem) => elem.tagName !== "BUTTON" && elem.type !== "submit"
@@ -40,8 +42,29 @@ const closeModal = (event) => {
     modalItem.classList.add("hide");
     modalSubmit.reset();
     document.removeEventListener("keydown", closeModal);
+    modalImageAdd.src = srcModalImage;
+    modalFileBtn.textContent = textFileBtn;
+
     checkForm();
   }
+};
+
+const renderCard = () => {
+  catalog.textContent = "";
+  dataBase.forEach((item, i) => {
+    catalog.insertAdjacentHTML(
+      "beforeend",
+      `
+    <li class="card" data-id ="${i}">
+      <img class="card__image" src="data:image/jpeg;base64,${item.image}" alt="test" />
+      <div class="card__description">
+        <h3 class="card__header">${item.nameItem}</h3>
+        <div class="card__price">${item.costItem}</div>
+      </div>
+    </li>
+          `
+    );
+  });
 };
 
 modalFileInput.addEventListener("change", (event) => {
@@ -63,6 +86,8 @@ modalFileInput.addEventListener("change", (event) => {
       modalImageAdd.src = `data:image/jpeg;base64,${infoFoto.base64}`;
     } else {
       modalFileBtn.textContent = "файл нe должен превышать 200кБ";
+      modalFileInput.value = "";
+      checkForm();
     }
   });
 });
@@ -80,6 +105,7 @@ modalSubmit.addEventListener("submit", (event) => {
   modalSubmit.reset();
   closeModal({ target: modalAdd });
   saveDB();
+  renderCard();
 });
 
 addAd.addEventListener("click", () => {
@@ -96,3 +122,5 @@ catalog.addEventListener("click", (event) => {
 
 modalAdd.addEventListener("click", closeModal);
 modalItem.addEventListener("click", closeModal);
+
+renderCard();
