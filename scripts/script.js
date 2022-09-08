@@ -124,3 +124,40 @@ modalAdd.addEventListener("click", closeModal);
 modalItem.addEventListener("click", closeModal);
 
 renderCard();
+
+catalog.addEventListener("click", (event) => {
+  const target = event.target.closest(".card");
+
+  dataBase.forEach((item, id) => {
+    if (id == target.dataset.id) {
+      console.log(item);
+      modalItem.innerHTML = `
+        <div class="modal__block">
+              <h2 class="modal__header">Купить</h2>
+              <div class="modal__content">
+                <div>
+                  <img
+                    class="modal__image modal__image-item"
+                    src="data:image/jpeg;base64,${item.image}"
+                    alt="image"
+                  />
+                </div>
+                <div class="modal__description">
+                  <h3 class="modal__header-item">${item.nameItem}</h3>
+                  <p>Состояние: <span class="modal__status-item">${item.status}</span></p>
+                  <p>
+                    Описание:
+                    <span class="modal__description-item"
+                      >${item.descriptionItem}</span
+                    >
+                  </p>
+                  <p>Цена: <span class="modal__cost-item">${item.costItem} ₽</span></p>
+                  <button class="btn">Купить</button>
+                </div>
+              </div>
+              <button class="modal__close">&#10008;</button>
+            </div>
+        `;
+    }
+  });
+});
